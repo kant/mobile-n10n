@@ -5,6 +5,7 @@ import javax.inject.Inject
 import auditor.{AuditorWSClient, mkAuditorGroup}
 import com.google.inject.ImplementedBy
 import models.Topic
+import play.api.Logger
 import play.api.libs.ws.WSClient
 import registration.services.Configuration
 
@@ -26,6 +27,7 @@ trait TopicValidator {
 
 final class AuditorTopicValidator(auditorClient: AuditorWSClient, configuration: Configuration)
   extends TopicValidator {
+  private val logger = Logger(classOf[TopicValidator])
 
   @Inject def this(wsClient: WSClient, configuration: Configuration) = this(new AuditorWSClient(wsClient),
                                                                             configuration)
@@ -34,7 +36,11 @@ final class AuditorTopicValidator(auditorClient: AuditorWSClient, configuration:
     mkAuditorGroup(configuration.auditorConfiguration)
       .queryEach { auditorClient.expiredTopics(_, topics) }
       .map { expired => (topics -- expired.flatten).right }
-      .recover { case _ => AuditorClientError(topics).left }
+      .recover { case e => {
+        logger.error("Failed fetching invalid topics from Auditor client:", e)
+        AuditorClientError(topics).left
+      }
+      }
   
   case class AuditorClientError(topicsQueried: Set[Topic]) extends TopicValidatorError {
     override def reason: String = "Failed fetching invalid topics from Auditor client"
