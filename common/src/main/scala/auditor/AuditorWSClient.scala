@@ -12,10 +12,13 @@ class AuditorWSClient(wsClient: WSClient)(implicit ec: ExecutionContext) {
 
   def expiredTopics(auditor: Auditor, topics: Set[Topic]): Future[Set[Topic]] = topics.toList match {
     case Nil => Future.successful(topics)
-    case tl => logger.debug(s"Asking auditor ($auditor) for expired topics with $topics")
+    case tl => logger.info(s"Asking auditor ($auditor) for expired topics with $topics")
+      logger.info(s"URL: ${ auditor.host }/expired-topics")
+      val data = Json.toJson(ExpiredTopicsRequest(tl))
+      logger.info(s"data $data")
       wsClient
       .url(s"${ auditor.host }/expired-topics")
-      .post(Json.toJson(ExpiredTopicsRequest(tl)))
+      .post(data)
       .map { _.json.as[ExpiredTopicsResponse].topics.toSet }
   }
 }
