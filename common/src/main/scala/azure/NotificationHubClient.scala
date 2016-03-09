@@ -72,7 +72,7 @@ class NotificationHubClient(notificationHubConnection: NotificationHubConnection
       .withHeaders(serviceBusTags: _*)
       .post(azureWindowsPush.body)
       .map { response =>
-        logger.debug(s"Response from azure: ${response.body})
+        logger.debug(s"Response from azure: ${response.body}")
         if ((200 until 300).contains(response.status))
           ().right
         else
