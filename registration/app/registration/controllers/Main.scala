@@ -39,8 +39,7 @@ final class Main @Inject()(notificationRegistrarSupport: RegistrarSupport, topic
         .removeInvalid(topics)
         .map {
           case \/-(filteredTopics) =>
-            //LOG an error message just to test the alarm
-            logger.error(s"Could not validate topics ${e.topicsQueried} for registration (${registration.deviceId}), reason: ${e.reason}")
+            logger.debug(s"Successfully validated topics in registration (${registration.deviceId}), topics valid: [$filteredTopics]")
             filteredTopics
           case -\/(e) =>
             logger.error(s"Could not validate topics ${e.topicsQueried} for registration (${registration.deviceId}), reason: ${e.reason}")
