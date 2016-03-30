@@ -26,7 +26,11 @@ final class Main @Inject()(notificationRegistrarSupport: RegistrarSupport, topic
   def healthCheck: Action[AnyContent] = Action {
     Ok("Good")
   }
-
+  def logTest(lastKnownDeviceId: String): Action[Registration] = Action.async(BodyJson[Registration]) { request =>
+    val registration = request.body
+    logger.error(s"Could not validate topics ${registration.topics} for registration (${registration.deviceId}), reason: some reason")
+    Future.successful(Ok("Good"))
+  }
   def register(lastKnownDeviceId: String): Action[Registration] = Action.async(BodyJson[Registration]) { request =>
     val registration = request.body
 
