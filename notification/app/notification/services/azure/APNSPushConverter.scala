@@ -10,6 +10,7 @@ import notification.models.{Push, ios}
 import notification.services.Configuration
 import play.api.Logger
 import PlatformUriTypes.{External, FootballMatch, Item}
+import models.Link.Internal
 
 class APNSPushConverter(conf: Configuration) {
 
@@ -19,8 +20,22 @@ class APNSPushConverter(conf: Configuration) {
     logger.debug(s"Converting push to Azure: $push")
     APNSRawPush(
       body = toAzure(push.notification).payload,
-      tags = toTags(push.destination)
+      tags = toTags(push.destination),
+      collapseId = getCollapseId(push.notification)
     )
+  }
+
+  private def getCollapseId(notification: Notification): Option[String] = notification match {
+    case goalNotification: GoalAlertNotification => Some(goalNotification.matchId)
+    case contentNotification: ContentNotification => getContentIdFrom(contentNotification)
+    case _ => None
+  }
+
+  private def getContentIdFrom(contentNotification: ContentNotification):Option[String] = {
+    contentNotification.link match {
+      case internal: Internal => Some(internal.contentApiId)
+      case _ => None
+    }
   }
 
   private def toBreakingNews(breakingNews: BreakingNewsNotification, editions: Set[Edition]) = {
