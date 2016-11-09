@@ -20,6 +20,8 @@ import registration.services.azure.{APNSEnterpriseNotifcationRegistrar, APNSNoti
 import registration.services._
 import tracking.{BatchingTopicSubscriptionsRepository, DynamoTopicSubscriptionsRepository, SubscriptionTracker, TopicSubscriptionsRepository}
 
+import router.Routes
+
 import scala.concurrent.ExecutionContext
 
 class RegistrationApplicationLoader extends ApplicationLoader {
