@@ -44,7 +44,7 @@ trait AppComponents extends Controllers
   with PlayComponents
   with AhcWSComponents
   with ExecutionEnv {
-  override lazy val httpErrorHandler: HttpErrorHandler = new LogHttpErrorHandler()
+  override lazy val httpErrorHandler: HttpErrorHandler = new LogHttpErrorHandler(environment, configuration, sourceMapper, Some(router))
 }
 
 trait Controllers {

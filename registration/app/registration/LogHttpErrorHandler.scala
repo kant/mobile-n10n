@@ -1,12 +1,18 @@
 package registration
 
-import play.api.Logger
-import play.api.http.HttpErrorHandler
+import play.api.{Configuration, Environment, Logger}
+import play.api.http.{DefaultHttpErrorHandler}
 import play.api.mvc.{RequestHeader, Result}
+import play.api.routing.Router
+import play.core.SourceMapper
 
 import scala.concurrent.Future
 
-class LogHttpErrorHandler extends HttpErrorHandler {
+class LogHttpErrorHandler(
+  environment: Environment,
+  configuration: Configuration,
+  sourceMapper: Option[SourceMapper] = None,
+  router: => Option[Router] = None) extends DefaultHttpErrorHandler(environment, configuration, sourceMapper, router) {
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
     Logger.error(s"HTTP $statusCode $message $request")
     super.onClientError(request, statusCode, message)
