@@ -12,15 +12,14 @@ import com.softwaremill.macwire._
 import _root_.models.Topic
 import _root_.models.TopicTypes.ElectionResults
 import org.joda.time.DateTime
+import play.api.http.HttpErrorHandler
 import registration.controllers.Main
 import registration.services.topic.{AuditorTopicValidator, TopicValidator}
-import registration.services.azure.{APNSEnterpriseNotifcationRegistrar, APNSNotificationRegistrar,
-GCMNotificationRegistrar, NewsstandNotificationRegistrar, WindowsNotificationRegistrar}
+import registration.services.azure.{APNSEnterpriseNotifcationRegistrar, APNSNotificationRegistrar, GCMNotificationRegistrar, NewsstandNotificationRegistrar, WindowsNotificationRegistrar}
 import registration.services._
 import tracking.{BatchingTopicSubscriptionsRepository, DynamoTopicSubscriptionsRepository, SubscriptionTracker, TopicSubscriptionsRepository}
 
 import scala.concurrent.ExecutionContext
-
 import router.Routes
 
 class RegistrationApplicationLoader extends ApplicationLoader {
@@ -44,7 +43,9 @@ trait AppComponents extends Controllers
   with AppConfiguration
   with PlayComponents
   with AhcWSComponents
-  with ExecutionEnv
+  with ExecutionEnv {
+  override lazy val httpErrorHandler: HttpErrorHandler = new LogHttpErrorHandler()
+}
 
 trait Controllers {
   self: Registrars
