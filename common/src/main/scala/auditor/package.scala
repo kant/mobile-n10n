@@ -82,7 +82,7 @@ package object auditor {
       client.matchInfo(matchId) map (_.matchStatus)
     }
 
-    private def isMatchEnded(matchId: String)(implicit ec: ExecutionContext): Future[Boolean] = Future.successful(true)
+    private def isMatchEnded(matchId: String)(implicit ec: ExecutionContext): Future[Boolean] = Future.successful(false)
   }
 
   case class AuditorGroup(auditors: Set[Auditor]) {
