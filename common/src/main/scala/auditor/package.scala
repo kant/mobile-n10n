@@ -82,16 +82,7 @@ package object auditor {
       client.matchInfo(matchId) map (_.matchStatus)
     }
 
-    private def isMatchEnded(matchId: String)(implicit ec: ExecutionContext): Future[Boolean] = {
-      cachedMatchStatus(matchId) map {
-        case matchStatus if matchEndedStatuses contains matchStatus => true
-        case _ => false
-      } recover {
-        case _ =>
-          Logger.error(s"Unable to determine match status of $matchId.  Assuming that it is in the future")
-          false
-      }
-    }
+    private def isMatchEnded(matchId: String)(implicit ec: ExecutionContext): Future[Boolean] = Future.successful(true)
   }
 
   case class AuditorGroup(auditors: Set[Auditor]) {
