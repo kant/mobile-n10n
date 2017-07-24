@@ -80,8 +80,6 @@ GNLAppendLog "I'm posting to the new notification-service. Host: https://notific
 
 # GNM INTERNAL Notification
 
-# old one pre 17 July 2017
-# /usr/bin/curl -X POST "https://notifications.guardian.co.uk/newsstand/trigger?api-key=9fpnUKZXKHx3ymRMoey7"
 # new one post 17 July 2017
 /usr/bin/curl -X POST "https://notification.notifications.guardianapis.com/push/newsstand?api-key=eHgOXkNfJ3X0nxBtUaav"
 curlExit=$?
@@ -90,6 +88,7 @@ if [ "$curlExit" -ne "0" ]; then
 	GNLAppendLog "OK so the new URL didn't work - cURL error: $curlExit."
 fi
 
+# old one pre 17 July 2017
 /usr/bin/curl -X POST "https://notifications.guardian.co.uk/newsstand/trigger?api-key=9fpnUKZXKHx3ymRMoey7"
 # done
 if [ "$curlExit" -ne "0" ]; then
