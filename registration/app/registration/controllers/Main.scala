@@ -148,7 +148,7 @@ final class Main(
 
   private def unregisterFromLegacy(registration: Registration) = legacyClient.unregister(registration.udid).foreach {
     case Xor.Right(_) =>
-      logger.debug(s"Unregistered ${registration.udid} from legacy notifications")
+      logger.info(s"Unregistered ${registration.udid} from legacy notifications")
     case Xor.Left(error) =>
       logger.error(s"Failed to unregistered ${registration.udid} from legacy notifications: $error")
   }
@@ -160,7 +160,7 @@ final class Main(
         .removeInvalid(topics)
         .map {
           case Xor.Right(filteredTopics) =>
-            logger.debug(s"Successfully validated topics in registration (${registration.deviceId}), topics valid: [$filteredTopics]")
+            logger.info(s"Successfully validated topics in registration (${registration.deviceId}), topics valid: [$filteredTopics]")
             filteredTopics
           case Xor.Left(e) =>
             logger.error(s"Could not validate topics ${e.topicsQueried} for registration (${registration.deviceId}), reason: ${e.reason}")
@@ -177,8 +177,10 @@ final class Main(
 
     registrarProvider.registrarFor(registration) match {
       case Xor.Right(registrar) =>
+        logger.info(s"Got registrar for: ${registration.udid}")
         validate(registration.topics).flatMap(registerWith(registrar, _).andThen(logErrors))
       case Xor.Left(error) =>
+        logger.error(s"Error retrieving registrar for: ${registration.udid}")
         Future.successful(error.left)
     }
   }
